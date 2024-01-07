@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model users {
+  user_id             Int        @id @default(autoincrement())
+  profile             profile    @default(user)
+  email               String     @unique
+  password            String
+  date_of_birth       DateTime?
+  address             String?
+  zip_code            String?
+  city                String?
+  profile_picture     Bytes?
+  confirmation_link   Boolean
+  confirmation_date_sent DateTime?
+  created_date        DateTime?  @default(now())
+  last_connection     DateTime?  @default(now())
+
+  recipes            recipes[]
+  favorites          favorites[]
+}
+
+enum profile {
+  user
+  administrator
+}
+
+model products {
+  product_id          Int        @id @default(autoincrement())
+  name                String
+  category            category
+  picture             Bytes?
+  description         String?
+
+  quantities quantities[]
+  products_of_months products_of_months[]
+}
+
+enum category {
+  fruits
+  vegetables
+  cereals
+  pulses
+}
+
+model products_of_months {
+  product_of_month_id Int        @id @default(autoincrement())
+  month               month
+  product_id          Int
+  featured            Boolean    @default(false)
+
+  product products @relation(fields: [product_id], references: [product_id])
+}
+
+enum month {
+january
+february
+march
+april
+may
+june
+july
+august
+september
+october
+november
+december
+}
+
+model recipes {
+  recipe_id           Int        @id @default(autoincrement())
+  title               String
+  photo               String?
+  difficulty          String?
+  duration            String?
+  number_persons      Int
+  instructions        String
+  utensils            String?
+  information         String?
+  user_id             Int
+
+  user users @relation(fields: [user_id], references: [user_id])
+  quantities quantities[]
+  favorites favorites[]
+}
+
+model quantities {
+  quantity_id         Int        @id @default(autoincrement())
+  quantity_number     Decimal
+  quantity_label      quantity_label
+  recipe_id           Int
+  product_id          Int
+
+  recipe  recipes  @relation(fields: [recipe_id], references: [recipe_id])
+  product products @relation(fields: [product_id], references: [product_id])
+}
+
+enum quantity_label {
+gram
+kilogram
+liter
+centiliter
+pinch
+bouquet
+slice
+}
+
+model favorites {
+  favorite_id         Int        @id @default(autoincrement())
+  recipe_id           Int
+  user_id             Int
+
+  recipe recipes @relation(fields: [recipe_id], references: [recipe_id])
+  user   users   @relation(fields: [user_id], references: [user_id])
+}

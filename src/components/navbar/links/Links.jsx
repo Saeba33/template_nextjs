@@ -20,8 +20,8 @@ const links = [
     path: "/contact",
   },
   {
-    title: "Folder",
-    path: "/folder",
+    title: "Recipes",
+    path: "/recipes",
   },
 ];
 

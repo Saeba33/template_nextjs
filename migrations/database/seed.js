@@ -1,6 +1,14 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+import { db as database } from "../db.js";
+import bcrypt from "bcrypt";
+const saltRounds = 10;
 
-const database = require("../db");
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const seed = async () => {
   try {
@@ -736,6 +744,9 @@ const seed = async () => {
         "INSERT INTO users (user_id, profile, email, password, date_of_birth,address, zip_code, city, profile_picture, confirmation_link,confirmation_date_sent, created_date, last_connection) VALUES (1, 'administrator', 'admin@example.com', 'test', '2024-01-01', '1 rue du pays imaginaire', '33000', 'Bordeaux', NULL, 1, NULL, NOW(), NULL)"
       )
     );
+
+    const hashedPasswordAdmin = await bcrypt.hash("admin", saltRounds);
+    const hashedPasswordUser = await bcrypt.hash("user", saltRounds);
     queries.push(
       database.query(
         "INSERT INTO users (user_id, profile, email, password, date_of_birth,address, zip_code, city, profile_picture, confirmation_link,confirmation_date_sent, created_date, last_connection) VALUES (2, 'user', 'user@example.com', 'test', '2024-01-01', '2 rue du pays imaginaire', '33000', 'Bordeaux', NULL, 1, NULL, NOW(), NULL)"
@@ -743,11 +754,11 @@ const seed = async () => {
     );
 
     await Promise.all(queries);
-    database.end();
-
     console.info(`${database.databaseName} filled from ${__filename} 🌱`);
   } catch (err) {
     console.error("Error filling the database:", err.message);
+  } finally {
+    database.end();
   }
 };
 

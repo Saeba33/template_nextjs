@@ -1,8 +1,14 @@
-const path = require("node:path");
-require("dotenv").config({ path: path.join(__dirname, "../.env") });
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
+import mysql from "mysql2/promise";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
-const mysql = require("mysql2/promise");
 
 const db = mysql.createPool({
   host: DB_HOST,
@@ -28,4 +34,9 @@ db.getConnection()
 
 db.databaseName = DB_NAME;
 
-module.exports = db;
+const connectToDb = async () => {
+  const connection = await db.getConnection();
+  return connection;
+};
+
+export { connectToDb, db };

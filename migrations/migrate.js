@@ -1,13 +1,17 @@
-const fs = require("node:fs");
-const path = require("node:path"); // Importez path ici
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
 
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const schema = path.join(__dirname, "database", "schema.sql");
 
 const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
-
-const mysql = require("mysql2/promise");
 
 const migrate = async () => {
   try {
@@ -21,17 +25,14 @@ const migrate = async () => {
       multipleStatements: true,
     });
 
-    await database.query(`drop database if exists ${DB_NAME}`);
-
-    await database.query(`create database ${DB_NAME}`);
-
-    await database.query(`use ${DB_NAME}`);
-
+    await database.query(`DROP DATABASE IF EXISTS ${DB_NAME}`);
+    await database.query(`CREATE DATABASE ${DB_NAME}`);
+    await database.query(`USE ${DB_NAME}`);
     await database.query(sql);
 
     database.end();
 
-    console.info(`Databse ${DB_NAME} updated from ${schema} 🆙`);
+    console.info(`Database ${DB_NAME} updated from ${schema} 🆙`);
   } catch (err) {
     console.error("Error updating the database:", err.message);
   }

@@ -1,5 +1,7 @@
 const Loading = () => {
-  return <div className="Loading">Loading</div>;
-};
+  return (
+    <div>Loading</div>
+  )
+}
 
-export default Loading;
+export default Loading

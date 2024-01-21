@@ -8,6 +8,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [setIsLoggedIn] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,6 +27,9 @@ const LoginForm = () => {
         return;
       }
 
+      const data = await response.json();
+      setIsLoggedIn(true);
+      localStorage.setItem("token", data.token);
       window.location.href = "/";
     } catch (error) {
       console.error(

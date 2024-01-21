@@ -1,6 +1,4 @@
-"use client";
-
-import Link from "next/link";
+// links/Links.jsx
 import Image from "next/image";
 import { useState } from "react";
 import styles from "./links.module.css";
@@ -25,11 +23,8 @@ const links = [
   },
 ];
 
-const Links = () => {
+const Links = ({ isLoggedIn, handleLogout }) => {
   const [open, setOpen] = useState(false);
-
-  const session = true;
-  const isAdmin = true;
 
   return (
     <div className={styles.container}>
@@ -37,14 +32,12 @@ const Links = () => {
         {links.map((link) => (
           <NavLink item={link} key={link.title} />
         ))}
-        {session ? (
-          <>
-            {isAdmin && <NavLink item={{ title: "Admin", path: "/admin" }} />}
-            <button className={styles.logout}>Logout</button>
-          </>
-        ) : (
-          <NavLink item={{ title: "Login", path: "/login" }} />
+        {isLoggedIn && (
+          <button className={styles.logout} onClick={handleLogout}>
+            Logout
+          </button>
         )}
+        {!isLoggedIn && <NavLink item={{ title: "Login", path: "/login" }} />}
       </div>
       <Image
         className={styles.menuButton}

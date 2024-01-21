@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { loginUser } from "../../lib/auth";
+import { requireAuth } from "../../lib/middleware";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
@@ -8,9 +9,7 @@ export default async function handler(req, res) {
 
       const user = await loginUser(email, password);
 
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET);
 
       res.status(200).json({ token });
     } catch (error) {
@@ -20,4 +19,11 @@ export default async function handler(req, res) {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end("Method Not Allowed");
   }
+}
+
+export async function getServerSideProps(context) {
+  await requireAuth(context.req, context.res);
+  return {
+    props: {},
+  };
 }

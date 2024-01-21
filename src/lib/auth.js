@@ -8,7 +8,7 @@ const getUserByEmail = async (email) => {
     ]);
     return rows[0];
   } catch (err) {
-    throw new Error("Failed to get user by email: " + err.message);
+    throw new Error("Failed to get user by email");
   }
 };
 
@@ -20,7 +20,7 @@ const createUser = async (email, password) => {
       hashedPassword,
     ]);
   } catch (err) {
-    throw new Error("Failed to create user: " + err.message);
+    throw new Error("Failed to create user");
   }
 };
 

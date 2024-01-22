@@ -1,4 +1,3 @@
-// links/Links.jsx
 import Image from "next/image";
 import { useState } from "react";
 import styles from "./links.module.css";
@@ -21,17 +20,28 @@ const links = [
     title: "Recipes",
     path: "/recipes",
   },
+  {
+    title: "Admin",
+    path: "/admin",
+    requireAdmin: true,
+  },
 ];
 
-const Links = ({ isLoggedIn, handleLogout }) => {
+const Links = ({ isLoggedIn, userProfile, handleLogout }) => {
   const [open, setOpen] = useState(false);
 
   return (
     <div className={styles.container}>
       <div className={styles.links}>
-        {links.map((link) => (
-          <NavLink item={link} key={link.title} />
-        ))}
+        {links.map((link) => {
+           if (
+            !link.requireAdmin ||
+            (link.requireAdmin && userProfile === "administrator")
+          ) {
+            return <NavLink item={link} key={link.title} />;
+          }
+          return null;
+        })}
         {isLoggedIn && (
           <button className={styles.logout} onClick={handleLogout}>
             Logout
@@ -49,9 +59,21 @@ const Links = ({ isLoggedIn, handleLogout }) => {
       />
       {open && (
         <div className={styles.mobileLinks}>
-          {links.map((link) => (
-            <NavLink item={link} key={link.title} />
-          ))}
+          {links.map((link) => {
+            if (
+              !link.requireAdmin ||
+              (link.requireAdmin && userProfile === "administrator")
+            ) {
+              return <NavLink item={link} key={link.title} />;
+            }
+            return null;
+          })}
+          {isLoggedIn && (
+            <button className={styles.logout} onClick={handleLogout}>
+              Logout
+            </button>
+          )}
+          {!isLoggedIn && <NavLink item={{ title: "Login", path: "/login" }} />}
         </div>
       )}
     </div>

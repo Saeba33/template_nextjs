@@ -4,7 +4,8 @@ import Links from "./links/Links";
 import styles from "./navbar.module.css";
 
 const Navbar = () => {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, userProfile } = useContext(AuthContext);
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -15,7 +16,11 @@ const Navbar = () => {
   return (
     <nav className={styles.container}>
       <div className={styles.logo}>Logo</div>
-      <Links isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      <Links
+        isLoggedIn={isLoggedIn}
+        userProfile={userProfile}
+        handleLogout={handleLogout}
+      />
     </nav>
   );
 };

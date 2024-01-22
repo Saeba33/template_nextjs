@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
       const user = await loginUser(email, password);
 
-      const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ user_id: user.id, profile: user.profile }, process.env.JWT_SECRET);
 
       res.status(200).json({ token });
     } catch (error) {
